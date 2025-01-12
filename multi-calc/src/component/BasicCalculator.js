@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 function BasicCalculator() {
-  const [displayValue, setDisplayValue] = useState('0');
   const [previousValue, setPreviousValue] = useState('');
+  const [displayValue, setDisplayValue] = useState(previousValue);
   const [operator, setOperator] = useState(null);
 
   const handleClick = (value) => {
@@ -38,7 +38,6 @@ function BasicCalculator() {
 
     if (['+', '-', '*', '/'].includes(value)) {
       setPreviousValue(displayValue);
-      setDisplayValue('0');
       setOperator(value);
       return;
     }
@@ -49,6 +48,12 @@ function BasicCalculator() {
       return; // Prevent multiple dots
     } else {
       setDisplayValue(displayValue + value);
+    }
+
+    if (['1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(value)) {
+      if (displayValue === previousValue) {
+      setDisplayValue(value)
+      }
     }
   };
 
@@ -124,7 +129,7 @@ function BasicCalculator() {
           onClick={() => handleClick('*')}
           className="bg-orange-400 text-white text-center rounded-full flex items-center justify-center text-5xl font-bold desktop:h-32"
         >
-          *
+          x
         </button>
 
         {[4, 5, 6].map((num) => (
