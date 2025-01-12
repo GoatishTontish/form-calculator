@@ -6,7 +6,7 @@ import BasicCalculator from './component/BasicCalculator';
 import ScientificCalculator from './component/ScientificCalculator';
 import TrianglePythagoras from './component/TrianglePythagoras';
 import TriangleAngle from './component/TriangleAngle';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
