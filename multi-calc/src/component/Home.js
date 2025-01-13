@@ -10,9 +10,9 @@ export default class Home extends React.Component {
     const categories = [
       "Basic Calculator",
       "Basic Calculator 2",
-      "Scientific Calculator",
-      "Triangle Pythagoras",
-      "Triangle angle",
+      "Scientific Calculator (Coming Soon)",
+      "Triangle Pythagoras (Coming Soon)",
+      "Triangle angle (Coming Soon)",
     ];
 
     const showCategories = categories.map((category, index) => (
@@ -33,13 +33,13 @@ export default class Home extends React.Component {
     );
   }
 
-
-
   render() {
     return (
-      <div className="font-comfortaa">
+      <div className="font-comfortaa bg-blue-100 h-screen">
         <div className="flex justify-center">
-          <div className="text-5xl w-min font-semibold text-center mt-6 mb-6 text-green-600"><Link to="/">MultiCalculator</Link></div>
+          <div className="text-[2.5rem] desktop:text-5xl w-min font-semibold text-center mt-6 mb-6 text-green-600">
+            <Link to="/">MultiCalculator</Link>
+          </div>
         </div>
         {this.setCategories()}
       </div>
