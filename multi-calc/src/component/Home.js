@@ -9,6 +9,7 @@ export default class Home extends React.Component {
   setCategories() {
     const categories = [
       "Basic Calculator",
+      "Basic Calculator 2",
       "Scientific Calculator",
       "Triangle Pythagoras",
       "Triangle angle",

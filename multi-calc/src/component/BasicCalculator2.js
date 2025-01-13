@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
-function BasicCalculator() {
+function BasicCalculator2() {
   const [input, setInput] = useState("");
   const [result, setResult] = useState("");
+  const [expression, setExpression] = useState([]); 
 
   const formatNumber = (num) => {
     const cleanedNum = num.toString().replace(/'/g, "");
@@ -25,8 +26,9 @@ function BasicCalculator() {
     if (value === "=") {
       calculateResult();
     } else if (value === "AC") {
-      setInput("0");
-      setResult("0");
+      setInput("");
+      setResult("");
+      setExpression([]);
     } else if (value === "C") {
       setInput(input.slice(0, -1));
     } else if (value === "%") {
@@ -34,63 +36,89 @@ function BasicCalculator() {
         const percentage = parseFloat(input) / 100;
         setInput(percentage.toString());
       }
+    } else if (["+", "-", "×", "÷"].includes(value)) {
+      if (input !== "") {
+        setExpression([...expression, input, value]);
+        setInput(""); 
+      } else if (expression.length > 0) {
+        const updatedExpression = [...expression];
+        updatedExpression[updatedExpression.length - 1] = value;
+        setExpression(updatedExpression);
+      }
     } else if (value === ".") {
       if (!input.includes(".")) {
         setInput(input + value);
       }
-    } else if (input === "0") {
-      setInput(value);
     } else {
       setInput(input + value);
     }
   };
 
   const calculateResult = () => {
-    try {
-      const cleanInput = input.replace(/×/g, "*").replace(/÷/g, "/");
-      const solvedResult = solveInput(cleanInput);
-      setResult(formatNumber(solvedResult));
-    } catch (error) {
-      setResult("Error");
+    if (input !== "") {
+      const finalExpression = [...expression, input];
+      try {
+        const cleanExpression = finalExpression.map((item) =>
+          item === "×" ? "*" : item === "÷" ? "/" : item
+        );
+        const solvedResult = solveExpression(cleanExpression);
+        setResult(formatNumber(solvedResult));
+        setExpression([]);
+        setInput("");
+      } catch (error) {
+        setResult("Error");
+      }
     }
   };
 
-  const solveInput = (input) => {
-    const operatorCount = input.match(/(\d+|\+|-|\*|\/)/g);
-    if (!operatorCount) return;
+  const solveExpression = (exp) => {
+    const operatorPrecedence = { "*": 2, "/": 2, "+": 1, "-": 1 };
+    const values = [];
+    const operators = [];
 
-    let stack = [];
-    for (let i = 0; i < operatorCount.length; i++) {
-      if (operatorCount[i] === "*" || operatorCount[i] === "/") {
-        const operand1 = parseFloat(stack.pop());
-        const operand2 = parseFloat(operatorCount[++i]);
-        stack.push(
-          operatorCount[i - 1] === "*"
-            ? operand1 * operand2
-            : operand1 / operand2
-        );
+    const applyOperator = () => {
+      const operator = operators.pop();
+      const right = parseFloat(values.pop());
+      const left = parseFloat(values.pop());
+
+      switch (operator) {
+        case "+":
+          values.push(left + right);
+          break;
+        case "-":
+          values.push(left - right);
+          break;
+        case "*":
+          values.push(left * right);
+          break;
+        case "/":
+          values.push(left / right);
+          break;
+        default:
+          break;
+      }
+    };
+
+    exp.forEach((token) => {
+      if (!isNaN(token)) {
+        values.push(token);
       } else {
-        stack.push(operatorCount[i]);
+        while (
+          operators.length > 0 &&
+          operatorPrecedence[operators[operators.length - 1]] >=
+            operatorPrecedence[token]
+        ) {
+          applyOperator();
+        }
+        operators.push(token);
       }
+    });
+
+    while (operators.length > 0) {
+      applyOperator();
     }
 
-    // Handle cases with only addition and subtraction
-    if (stack.length === 1) {
-      return stack[0];
-    }
-
-    let result = parseFloat(stack.shift()); // Get the first operand
-    while (stack.length > 0) {
-      const operator = stack.shift();
-      const operand = parseFloat(stack.shift());
-      if (operator === "+") {
-        result += operand;
-      } else if (operator === "-") {
-        result -= operand;
-      }
-    }
-
-    return result.toString();
+    return values[0];
   };
 
   return (
@@ -207,4 +235,4 @@ function BasicCalculator() {
   );
 }
 
-export default BasicCalculator;
+export default BasicCalculator2;
